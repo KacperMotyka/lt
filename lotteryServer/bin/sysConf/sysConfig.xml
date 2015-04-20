@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 系统配置  --><SystemConfiguration>
+	<Normal>16</Normal>
+	<MaxQihaoCount>10</MaxQihaoCount>
+	<LastYear value="2011">141</LastYear>
+	<LastMonth value="8">10</LastMonth>
+	<UsedCompany>0</UsedCompany>
+	<OnePageCount>15</OnePageCount>
+	<AutoUpdate>true</AutoUpdate>
+	<AutoKj>true</AutoKj>
+	<AutoCheckQiHao>true</AutoCheckQiHao>
+	<ExitAutoSave>false</ExitAutoSave>
+	<AutoUpSoft>false</AutoUpSoft>
+	<SortByAllBasket>false</SortByAllBasket>
+	<Qihao>
+		<CurrentSfcQihao>12115</CurrentSfcQihao>
+		<CurrentBjdcQihao>120906</CurrentBjdcQihao>
+		<CurrentJczqPeriod>2012-09-09 10:16</CurrentJczqPeriod>
+	</Qihao>
+	<Site>
+		<SfcSite>http://zc.trade.500wan.com/sfc/index.php</SfcSite>
+		<SfcKjSite>http://kaijiang.500wan.com/shtml/sfc/</SfcKjSite>
+		<BjdcSite>http://zc.trade.500wan.com/bjdc/</BjdcSite>
+		<JczqSite>http://trade.500wan.com/jczq</JczqSite>
+	</Site>
+	<BackupSiteList>
+		<SfcSiteList>
+			http://www.okooo.com/zucai/
+			http://sports.sina.com.cn/l/2caipiao/sfc/
+		</SfcSiteList>
+		<SfcKjSiteList>
+		</SfcKjSiteList>
+		<BjdcSiteList>
+		</BjdcSiteList>
+		<JczqSiteList>
+		</JczqSiteList>
+	</BackupSiteList>
+	<Proxy>
+		<Used>false</Used>
+		<Ip>127.0.0.1</Ip>
+		<Port>0</Port>
+	</Proxy>
+</SystemConfiguration>

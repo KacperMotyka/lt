@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exceptions>
+	<exception>
+		<code>-1</code>
+		<message>未知错误</message>
+	</exception>
+	<exception>
+		<code>0</code>
+		<message>成功</message>
+	</exception>
+	<exception>
+		<code>1</code>
+		<message>失败</message>
+	</exception>
+	<exception>
+		<code>10</code>
+		<message>文件未找到</message>
+	</exception>
+	<exception>
+		<code>11</code>
+		<message>文件格式错误</message>
+	</exception>
+	<exception>
+		<code>12</code>
+		<message>系统配置文件错误</message>
+	</exception>
+	<exception>
+		<code>13</code>
+		<message>胜负彩数据更新失败</message>
+	</exception>
+	<exception>
+		<code>14</code>
+		<message>北京单场数据更新失败</message>
+	</exception>
+	<exception>
+		<code>15</code>
+		<message>竞彩足球据更新失败</message>
+	</exception>
+	<exception>
+		<code>16</code>
+		<message>系统初始化失败</message>
+	</exception>
+</exceptions>

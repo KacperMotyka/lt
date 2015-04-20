@@ -1,0 +1,191 @@
+@CHARSET "UTF-8";
+
+.account {
+	font-style: italic;
+	font-size: 125%;
+	font-weight: bold;
+	color: red;
+}
+
+.bigFont {
+	font-size: 150%;
+	font-weight: bold;
+}
+
+.smallFont {
+	font-size: 60%;
+}
+
+.gray {
+	color: gray;
+}
+
+.boldFont {
+	font-weight: bold;
+}
+
+body div {
+	margin-left: 50px;	
+}
+
+table.bettab {
+	border: 1;
+	margin-left: 50px;
+	margin-top: 10px;
+}
+
+table.bettab td {
+	text-align: center;
+}
+
+table.bettab thead tr {
+	position: relative;
+	top: expression(this.offsetParent.scrollTop);
+}
+
+table.bettab thead td {
+	background-color: #ccc;
+	position: relative;
+	width: 100px;
+	text-align: center;
+}
+
+table.bettab thead td.sj {
+	width: 140px;
+}
+
+table.bettab thead td.wf {
+	width: 200px;
+}
+
+table.bettab tbody td {
+	background-color: #ccc;
+	position: relative;
+	width: 100px;
+	text-align: center;
+}
+
+table.bettab tbody td.wide {
+	width: 150px;
+}
+
+table.bettab tbody td.bigWide {
+	width: 220px;
+}
+
+table.kjtab {
+	border: 1;
+}
+
+table.kjtab td {
+	text-align: center;
+}
+
+table.kjtab thead tr {
+	position: relative;
+	top: expression(this.offsetParent.scrollTop);
+}
+
+table.kjtab thead td {
+	background-color: #ccc;
+	font-weight: bold;
+	position: relative;
+}
+
+/* betDetail */
+body.rim {
+	margin: 80px;
+}
+
+body.rim div.head {
+	margin-left: 100px;
+	text-align: center;
+}
+
+body.rim div.body {
+	margin-left: 150px;
+	margin-top: 20px;
+}
+	
+body.rim div.fanr {
+	margin-left: 50px;
+	margin-top: 30px;
+}
+
+body div h1 {
+	font-size: 150%;
+	font-weight: bold;
+	text-align: center;
+}
+
+body div table.dttab {
+	border: 1;
+	margin-top: 20px;
+}
+
+hr {
+	margin-left: 52px;
+}
+
+hr.zjtab {
+	margin-left: 23px;
+	background-color: orange;
+}
+
+div.zjtab {
+	margin-left: 23px;
+	margin-top: 5px;
+}
+
+table.zjtable td.moy {
+
+}
+
+table.zjtab {
+	margin-left: 23px;
+	margin-top: 5px;
+}
+
+table.zjtable td.zjqk {
+	width: 52px;
+}
+
+table.zjtab thead tr td {
+	width: 180px;
+}
+
+body div.body thead tr td.cc {
+	width: 80px;
+}
+
+body div.body thead tr td.sj {
+	width: 200px;
+}
+
+body div.body thead tr td.dz {
+	width: 300px;
+}
+
+body div.body thead tr td.bf {
+	width: 80px;
+}
+
+body div.body thead tr td.tz {
+	width: 120px;
+}
+
+body div.body thead tr td.cg {
+	width: 80px;
+}
+
+body div.body thead tr td.sp {
+	width: 100px;
+}
+
+body div.body thead tr td.dan {
+	width: 60px;
+}
+
+body div.body tbody tr td.gglx {
+	text-align: center;
+}

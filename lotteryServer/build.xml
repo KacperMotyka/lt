@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="lottery" default="dmpExport" basedir=".">
+
+	<!--配置基本属性-->
+	<property file="./build.properties" />
+	<property name="classpath" location="${build}"/>
+
+	<!--配置运行时classpath-->
+	<path id="classpath.run">
+		<pathelement path="${classpath}"/>
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir=".">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<!--配置测试时classpath-->
+	<path id="classpath.test">
+		<path refid="classpath.run"/>
+		<path location="${dist}/lib/test-${DSTAMP}.jar"/>
+	</path>
+	
+	<!-- 打印处理信息 -->
+	<target name="echo">
+			<echo>
+
+		    These are the targets supported by this ANT build scpript:
+		
+		    dmpExport  - will export the database user
+		
+		    run        - will run the lottery client
+		
+		    test       - will run the JUnit test
+		
+		    mkRunJar - will run jar command
+		               compiler all java class 
+		               generator executable jar file
+				
+	    	</echo>
+	</target>
+	
+	<!--数据库导出清理-->
+	<target name="dmpClean" depends="echo">
+		<delete dir="${DB_BACKUP_DIR}/${EXP_LT_USER}.dmp"/>
+	</target>
+	<!--数据库导出-->
+	<target name="dmpExport" description="数据库导出" depends="dmpClean">
+		<exec dir="${DB_BACKUP_DIR}" executable="exp" >			
+			<arg line=" ${EXP_LT_USER}/${EXP_LT_PWD}@${EXP_ORA_WebSID} file=${EXP_LT_BAKNAME}.dmp"/>	
+		</exec>
+	</target>
+
+	<!--任务初始化-->
+	<target name="init" >
+		<tstamp/>
+		<delete dir="${bin}"/>
+		<mkdir dir="${bin}"/>
+	</target>
+
+	<!--配置编译任务-->
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${bin}">
+			<classpath refid="classpath.run" />
+		</javac>
+	</target>
+
+	<!--配置打包任务-->
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}/lib"/>
+		<jar jarfile="${dist}/lib/test-${DSTAMP}.jar" basedir="${bin}"/>
+	</target>
+
+	<!--配置运行任务-->
+	<target name="run" depends="compile, dist">
+		<java classname="com.rb.lottery.run.ClientStart">
+			<classpath>
+				<path refid="classpath.run"/>
+			</classpath>
+		</java>
+	</target>
+
+	<!--执行测试用例同时生成junit测试报告和emma代码覆盖率报告-->
+	<target name="test" depends="compile, dist">
+		<delete dir="${report.xml}" />
+		<delete dir="${report.html}" />
+		<delete dir="${coverage}" />
+		<mkdir dir="${report.xml}"/>
+		<mkdir dir="${report.html}"/>
+		<mkdir dir="${coverage}"/>
+		<junit fork="true" forkmode="once"
+	               printsummary="withOutAndErr"
+	               errorproperty="test.error"
+	               showoutput="on">
+			<!--指明代码覆盖率的元数据的存放位置-->
+			<jvmarg value="-Demma.coverage.out.file=${coverage}/metadata.emma"/>
+			<jvmarg value="-Demma.coverage.out.merge=true"/>
+
+			<classpath refid="classpath.run"/>
+			<formatter type="xml"/>
+			<!--执行所有含Test的junit测试用例-->
+			<batchtest fork="yes" todir="${report.xml}" haltonfailure="no">
+				<fileset dir="${bin}">
+					<include name="**/*Test*.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!--生成junit测试报告-->
+	<target name="gen-junit-report" depends="test">
+		<junitreport todir="${report.html}">
+			<fileset dir="${report.xml}">
+				<include name="*.xml"/>
+			</fileset>
+			<report format="frames" todir="${report.html}"/>
+		</junitreport>
+	</target>
+
+	<!--生成代码覆盖率报告-->
+	<target name="gen-report-coverage" depends="test">
+		<!--如果属性emma.enabled的值是true，就生成代码覆盖率报告 -->
+		<emma enabled="${emma.enabled}">
+			<report sourcepath="${src}"
+	                    sort="+line,+block,+name,+method,+class"
+	                    metrics="method:100,block:90,line:90,class:100">
+				<fileset dir="${coverage}">
+					<include name="metadata.emma"/>
+				</fileset>
+				<html outfile="${coverage}/coverage.html"
+	                      depth="method"/>
+			</report>
+		</emma>
+	</target>
+
+	<!--配置JUnit测试，打印测试结果-->
+	<target name="junit-test" depends="compile, dist">
+		<mkdir dir="${report.xml}"/>
+		<mkdir dir="${report.html}"/>
+		<junit printsummary="yes" haltonfailure="no">
+			<classpath refid="classpath.run"/>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${report.xml}">
+				<fileset dir="${src}" includes="**/*Test*.java"/>
+			</batchtest>
+		</junit>
+		<junitreport todir="${report.html}">
+			<fileset dir="${report.xml}">
+				<include name="*.xml"/>
+			</fileset>
+			<report format="frames" todir="${report.html}"/>
+		</junitreport>
+	</target>
+	
+	<target name="mkRunJar" depends="echo">
+			<jar destfile="${ProgrammLocation}/${JarFile}" filesetmanifest="mergewithoutmain">
+				<manifest>
+					<attribute name="Main-Class" value="com.rb.lottery.run.ClientStart" />
+					<attribute name="Class-Path" value="." />
+				</manifest>
+				<fileset dir="D:/MyWorkspace/lottery/bin" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/dom4j-1.7-20060614.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/jdom-1.0.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/html4j-0.3.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/jclf-2.3.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/httpclient-4.0.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/httpcore-4.0.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/commons-httpclient-3.0.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/commons-logging-1.1.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/commons-codec-1.2.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/jaxen-1.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/log4j-1.2.16.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/ojdbc14-10.2.0.2.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/datechooser-1.0.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/datatableheader-1.0.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/gridbagtable-1.0.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/threadpool-1.0.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/JNative.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyWorkspace/lottery/lib/junit.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/entitymanager/hibernate-annotations.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/entitymanager/hibernate-commons-annotations.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/entitymanager/hibernate-entitymanager.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/hibernate-validator.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/entitymanager/ejb3-persistence.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/bytecode/cglib/cglib-2.2.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/bytecode/javassist/javassist-3.9.0.GA.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.2/lib/antlr-2.7.6.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/required/commons-collections-3.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/hibernate3.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/required/jta-1.1.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.2/lib/ehcache-1.2.3.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/required/slf4j-api-1.5.8.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/required/slf4j-log4j12-1.5.8.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.3/lib/required/log4j-1.2.14.jar" />
+				<zipfileset excludes="META-INF/*.SF" src="D:/MyEclipse 8.6 M1/Common/plugins/com.genuitec.org.hibernate.eclipse_3.2.4.CR1-me201003101716/myeclipse-data/3.1/lib/dom4j-1.6.1.jar" />
+			</jar>
+		</target>
+</project>
